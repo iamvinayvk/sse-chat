@@ -1,6 +1,6 @@
 # SSE Chat 🗨️
 
-A simple demo utilizing **Server-Sent Events (SSE)** to create a real-time chat room experience. The server pushes messages to all connected clients in real-time, allowing for a smooth, scalable chat experience without the complexity of WebSockets.
+A simple demo utilizing **Server-Sent Events (SSE)** to create a real-time chat room experience. The server pushes messages to all connected clients in real-time using Node.js, allowing for a smooth, scalable chat experience without the complexity of WebSockets.
 
 ## How it Works 🛠️
 - **Server-Sent Events (SSE)**: The server establishes a connection with the client using SSE, allowing it to push real-time updates like chat messages. Clients listen for incoming events and display new messages instantly.
