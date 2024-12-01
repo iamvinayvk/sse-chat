@@ -1,8 +1,10 @@
 import { useState } from "react";
+import { useClientStore } from "../store/clientStore";
 const BASE_URL = "http://localhost:3000";
-const ChatBox = ({ messages }) => {
-  console.log(messages);
+const ChatBox = (props) => {
+  const { messages } = props;
   const [inputMessage, setInputMessage] = useState("");
+  const { clientId } = useClientStore();
 
   const handleSendMessage = () => {
     if (inputMessage.trim()) {
@@ -11,7 +13,7 @@ const ChatBox = ({ messages }) => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ text: inputMessage }),
+        body: JSON.stringify({ text: inputMessage, userId: clientId }),
       })
         .then((response) => response.json())
         .then((data) => console.log(data));
@@ -28,19 +30,19 @@ const ChatBox = ({ messages }) => {
       <div className="flex-1 overflow-y-auto p-2 space-y-4 bg-gray-100">
         {messages.map((message) => (
           <div
-            key={message.id}
+            key={message.timestamp}
             className={`flex ${
-              message.sender === "self" ? "justify-end" : "justify-start"
+              message.clientId === clientId ? "justify-end" : "justify-start"
             }`}
           >
             <div
               className={`p-3 max-w-xs rounded-lg ${
-                message.sender === "self"
+                message?.clientId === clientId
                   ? "bg-blue-500 text-white rounded-br-none"
                   : "bg-gray-200 text-gray-700 rounded-bl-none"
               }`}
             >
-              {message}
+              {message.message}
             </div>
           </div>
         ))}

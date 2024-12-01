@@ -13,10 +13,15 @@ app.listen(PORT, function () {
 
 let clients = {};
 
-function sendMessage(message) {
-  console.log(`Sending message: ${message}`);
+function sendMessage(message, userId) {
   for (const clientId in clients) {
-    clients[clientId].write(`data: ${message}\n\n`);
+    const dataPayLoad = {
+      message: message,
+      clientId: userId ?? clientId,
+      timestamp: new Date().toISOString(),
+    };
+
+    clients[clientId].write(`data: ${JSON.stringify(dataPayLoad)}\n\n`);
   }
 }
 
@@ -29,8 +34,12 @@ app.get("/events/sse", function (req, res) {
   if (eventSource) {
     const clientId = uuidv4();
     clients[clientId] = eventSource;
-    console.log(`New client connected: ${clientId}`);
-    eventSource.write(`data: Hello, client ${clientId}\n\n`);
+    const dataPayLoad = {
+      message: `Hello, client ${clientId}`,
+      clientId: clientId,
+      timestamp: new Date().toISOString(),
+    };
+    eventSource.write(`data:${JSON.stringify(dataPayLoad)}\n\n`);
     req.on("close", () => {
       delete clients[clientId];
     });
@@ -41,6 +50,7 @@ app.get("/events/sse", function (req, res) {
 
 app.post("/send-message", function (req, res) {
   const message = req.body.text;
-  sendMessage(message);
+  const userId = req.body.userId;
+  sendMessage(message, userId);
   res.send({ message: "Message sent successfully" });
 });
